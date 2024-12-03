@@ -1,6 +1,38 @@
-import React from 'react';
-import LogImg from '../assets/Login-image.jpg'
+import React, { useState } from 'react';
+import LogImg from '../Assets/Login-image.jpg';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 const Login = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    // Validate form inputs
+    if (!email || !password || !phone) {
+      setError('Please fill all fields.');
+      return;
+    }
+
+    try {
+      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password, phone });
+      if (response.data.token) {
+        // Assuming response contains a token and redirects to the dashboard
+        localStorage.setItem('authToken', response.data.token); // Store token if needed
+        navigate('/dashboard');
+      } else {
+        setError('Invalid credentials.');
+      }
+    } catch (err) {
+      setError('An error occurred. Please try again.');
+    }
+  };
+
   return (
     <>
       {/* Include Bootstrap CSS */}
@@ -96,6 +128,17 @@ const Login = () => {
           .form-section .forgot-password:hover {
               text-decoration: underline;
           }
+          .form-section .signup-link {
+              display: block;
+              text-align: center;
+              font-size: 14px;
+              color: #007bff;
+              text-decoration: none;
+              margin-top: 20px;
+          }
+          .form-section .signup-link:hover {
+              text-decoration: underline;
+          }
         `}
       </style>
 
@@ -105,27 +148,41 @@ const Login = () => {
           {/* Image Section */}
           <div className="image-section">
             <img
-              src = {LogImg}
-              alt="Doctor Illustration"
+              src={LogImg}
+              alt="Login Illustration"
               className="img-fluid"
             />
           </div>
 
           {/* Form Section */}
           <div className="form-section">
-            <h2>Welcome to Heamosis</h2>
+            <h2>Welcome to Hemosis</h2>
             <p>Log in to join our cause</p>
-            <form>
+            
+            {/* Display error message if there's any */}
+            {error && <div className="alert alert-danger">{error}</div>}
+            
+            <form onSubmit={handleLogin}>
               <input
                 type="text"
                 className="form-control"
                 placeholder="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
               />
-              <input type="email" className="form-control" placeholder="Email" />
+              <input
+                type="email"
+                className="form-control"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
               <input
                 type="password"
                 className="form-control"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
               <a href="#" className="forgot-password">
                 Forgotten Password?
@@ -134,6 +191,11 @@ const Login = () => {
                 Log In
               </button>
             </form>
+
+            {/* Link to Sign Up Page */}
+            <a href="/signup" className="signup-link">
+              Don't have an account? Sign Up
+            </a>
           </div>
         </div>
       </div>

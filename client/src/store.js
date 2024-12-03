@@ -1,15 +1,11 @@
 // src/store.js
-import { configureStore } from '@reduxjs/toolkit';
-import donationReducer from './features/donationSlice';
-import searchReducer from './features/searchSlice';
-import authReducer from "./features/authSlice";
+import { createStore, combineReducers } from 'redux';
+import { authReducer } from './reducers/authReducer'; // Authentication reducer
 
-const store = configureStore({
-  reducer: {
-    donations: donationReducer,
-    search: searchReducer,
-    auth: authReducer,
-  },
+const rootReducer = combineReducers({
+  auth: authReducer, // Combine all your reducers here
 });
+
+const store = createStore(rootReducer);
 
 export default store;

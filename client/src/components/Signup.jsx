@@ -1,7 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios"; // Import Axios
 import loginImage from "../assets/Login-image.jpg"; // Import your image
 
 const Signup = () => {
+  const [role, setRole] = useState('user'); // Default role is 'user'
+  const [fullName, setFullName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [location, setLocation] = useState('');
+  const [error, setError] = useState(''); // Error state for handling error messages
+  const navigate = useNavigate();
+
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const userData = {
+      fullName,
+      phone,
+      email,
+      password,
+      role,
+      location: role === 'bloodBank' ? location : undefined, // Only include location for blood bank
+    };
+
+    try {
+      // POST request to the backend API for user registration
+      const response = await axios.post('http://localhost:5000/api/auth/signup', userData);
+      
+      if (response.data.success) {
+        // Redirect based on the user role
+        if (role === 'bloodBank') {
+          navigate("/dashboard"); // Redirect blood bank directly to dashboard
+        } else {
+          navigate("/home"); // Redirect user to home
+        }
+      } else {
+        setError("Signup failed. Please try again.");
+      }
+    } catch (error) {
+      setError("An error occurred during signup. Please try again.");
+    }
+  };
+
   return (
     <>
       {/* Bootstrap CSS */}
@@ -16,9 +59,6 @@ const Signup = () => {
             font-family: Arial, sans-serif;
         }
 
-        /* Top Navigation Bar */
-       
-        /* Main Signup Container */
         .signup-container {
             display: flex;
             align-items: center;
@@ -34,7 +74,6 @@ const Signup = () => {
             width: 100%;
         }
 
-        /* Image Section */
         .image-section {
             background-color: #e8f4ff;
             display: flex;
@@ -48,7 +87,6 @@ const Signup = () => {
             object-position: center;
         }
 
-        /* Form Section */
         .form-section {
             background-color: #ffffff;
             padding: 40px 30px;
@@ -88,12 +126,11 @@ const Signup = () => {
             margin-top: 20px;
         }
         .form-section .additional-links {
-            text-align: right;
+            text-align: center;
             font-size: 14px;
             color: #007bff;
             text-decoration: none;
-            margin-top: -10px;
-            margin-bottom: 20px;
+            margin-top: 20px;
         }
         .form-section .additional-links a {
             color: #007bff;
@@ -115,7 +152,7 @@ const Signup = () => {
           {/* Image Section */}
           <div className="image-section">
             <img
-              src={loginImage}// Placeholder image
+              src={loginImage} // Placeholder image
               alt="Doctor Illustration"
               className="img-fluid"
             />
@@ -125,36 +162,101 @@ const Signup = () => {
           <div className="form-section">
             <h2>Sign Up</h2>
             <h3>Create a New Account.</h3>
-            <p>
-              Already a member?{" "}
-              <a href="/login_form" className="additional-links">
-                Log in
-              </a>
-            </p>
-            <form>
+
+            {/* Role Selection */}
+            <div className="form-group">
+              <label>Select your role:</label>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  id="roleUser"
+                  name="role"
+                  value="user"
+                  checked={role === 'user'}
+                  onChange={() => setRole('user')}
+                />
+                <label className="form-check-label" htmlFor="roleUser">
+                  User
+                </label>
+              </div>
+              <div className="form-check">
+                <input
+                  type="radio"
+                  className="form-check-input"
+                  id="roleBloodBank"
+                  name="role"
+                  value="bloodBank"
+                  checked={role === 'bloodBank'}
+                  onChange={() => setRole('bloodBank')}
+                />
+                <label className="form-check-label" htmlFor="roleBloodBank">
+                  Blood Bank
+                </label>
+              </div>
+            </div>
+
+            {/* Form Fields */}
+            <form onSubmit={handleSubmit}>
               <input
                 type="text"
                 className="form-control"
                 placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
               />
               <input
                 type="text"
                 className="form-control"
                 placeholder="Phone Number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                required
               />
               <input
                 type="email"
                 className="form-control"
                 placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
               />
               <input
                 type="password"
                 className="form-control"
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
+
+              {/* Conditionally Render the Location Field for Blood Banks */}
+              {role === 'bloodBank' && (
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Blood Bank Location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  required
+                />
+              )}
+
+              {/* Error Message Display */}
+              {error && <div className="alert alert-danger">{error}</div>}
+
+              {/* Submit Button */}
               <button type="submit" className="btn btn-primary">
-                Create Account
+                {role === 'user' ? 'Create User Account' : 'Create Blood Bank Account'}
               </button>
+
+              {/* Link to Login Page */}
+              <div className="additional-links">
+                <Link to="/login">
+                  Already a member? Login
+                </Link>
+              </div>
             </form>
           </div>
         </div>

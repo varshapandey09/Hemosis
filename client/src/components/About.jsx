@@ -34,7 +34,7 @@ const About = () => {
             <div className="col-7">
               <h3>Our Story</h3>
               <br />
-              <p style={{ textAlign: 'right' }}>
+              <p style={{ textAlign: 'left' }}>
                 Heamosis is more than just a platform – it’s a dream born out of a shared vision by
                 four students who wanted to make the world a better place. A powerful initiative,
                 driven by the belief that small actions can lead to big changes.
@@ -78,7 +78,7 @@ const About = () => {
             <div className="col-7">
               <h3>What We Do?</h3>
               <br />
-              <p style={{ textAlign: 'right' }}>
+              <p style={{ textAlign: 'left' }}>
                 Our platform serves as a bridge between blood donors and recipients. We make it easy
                 for individuals to register as donors, find nearby donation centers, and stay informed
                 about urgent needs in their community.
