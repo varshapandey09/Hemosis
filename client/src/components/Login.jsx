@@ -20,7 +20,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/login', { email, password, phone });
+      const response = await fetch('http://localhost:5000/api/auth/login', { email, password, phone });
       if (response.data.token) {
         // Assuming response contains a token and redirects to the dashboard
         localStorage.setItem('authToken', response.data.token); // Store token if needed

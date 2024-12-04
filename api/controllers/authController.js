@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import User from "../models/userModel.js";
 
 // Signup handler
-export async function signup(req, res) {
+export const signup = async(req, res, next)=>{
   const { fullName, phone, email, password, role, location } = req.body;
 
   try {
@@ -32,13 +32,12 @@ export async function signup(req, res) {
       token,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "An error occurred during signup" });
+    next(error);
   }
 }
 
 // Login handler
-export async function login(req, res) {
+export const login = async(req, res, next) => {
   const { email, password, phone } = req.body;
 
   try {
@@ -62,7 +61,6 @@ export async function login(req, res) {
 
     return res.json({ token });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Server error' });
+    next(error);
   }
 }

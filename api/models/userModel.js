@@ -1,6 +1,12 @@
-import { Schema, model } from "mongoose";
+import mongoose from 'mongoose';
+const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+  role: {
+    type: String,
+    required: true,
+    enum: ['user', 'bloodBank'], // Restrict values to 'user' or 'bloodBank'
+  },
   fullName: {
     type: String,
     required: true,
@@ -18,17 +24,18 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  role: {
-    type: String,
-    enum: ["user", "bloodBank"],
-    default: "user",
-  },
   location: {
     type: String,
     required: function () {
-      return this.role === "bloodBank"; // Only blood banks need a location
+      return this.role === 'bloodBank'; // Only required for blood banks
     },
   },
-}, { timestamps: true });
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-export default model("User", userSchema);
+const User = mongoose.model('User', userSchema);
+
+export default User;

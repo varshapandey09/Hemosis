@@ -27,10 +27,16 @@ const Signup = () => {
     };
 
     try {
-      // POST request to the backend API for user registration
-      const response = await axios.post('http://localhost:5000/api/auth/signup', userData);
+      setLoading(true);
+      const res = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
       
-      if (response.data.success) {
+      if (res.data.success) {
         // Redirect based on the user role
         if (role === 'bloodBank') {
           navigate("/dashboard"); // Redirect blood bank directly to dashboard
